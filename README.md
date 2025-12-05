@@ -97,3 +97,7 @@ Planned structure of the project repository:
 ├── documents/
 │   └── (report, slides, notes, etc.)
 └── README.md
+
+### Licence
+MIT License (MIT): see the [License File](https://github.com/sensiolabs/GotenbergBundle/blob/1.x/LICENSE) for more details.
+
