@@ -436,6 +436,10 @@ RL_tisza_min <- rbind(
 
 # Print all RL tables so we can visually compare how high/low extremes differ
 # between periods for each river and tail.
+# RP = Return Period “How often, on average, does such an extreme happen?”
+#RL = Return Level “How high is the event that happens with that frequency?”
+# RL = 64.33082 → return level → a water level of about 64 cm that the river is
+# expected to drop down to (or below) on average once every 2 years in that period.
 RL_duna_max
 RL_duna_min
 RL_tisza_max
