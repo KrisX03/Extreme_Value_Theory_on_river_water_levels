@@ -82,6 +82,12 @@ river_data <- river_data %>% filter(!is.na(make_date(year, month, day)))
 sum(is.na(river_data)) # 2 missing values
 river_data[!complete.cases(river_data), ]
 
+# reset the row numbering
+# sort rows by date_id
+river_data <- river_data[order(river_data$date_id), ]
+
+# reset row numbering to 1:n
+rownames(river_data) <- NULL
 
 # for curiosity checking the leap year
 nrow(river_data[river_data$year==2002 & river_data$river=="duna",])
