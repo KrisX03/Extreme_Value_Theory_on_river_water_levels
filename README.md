@@ -10,6 +10,7 @@
 
 ---
 # egyelőre csak gpt-vel írattam egy ilyet de felülvizsgálásra vár, ha megvagyunk majd átírjuk
+# nekem tetszik, de ez innetől kezdve itt is marad a historyban! egyébként szerintem jó, hogy a GPT képes összefoglalni formailag, amit csinálunk és GITHUB szalonképes formában legenerálni.
 ## Project overview
 
 In this project we study **extreme water levels** of the two largest Hungarian rivers:
