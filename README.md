@@ -1,6 +1,6 @@
-# Computational Statistics – Group Project  
+# Extreme Value Theory on River Water Levels  
 
-## Extreme Value Theory on River Water Levels  
+##   Computational Statistics – Group Project
 
 ### Team members
 - Kristóf Andrási  
