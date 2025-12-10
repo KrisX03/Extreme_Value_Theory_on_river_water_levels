@@ -9,14 +9,10 @@
 - Ákos Virág  
 
 ---
-# egyelőre csak gpt-vel írattam egy ilyet de felülvizsgálásra vár, ha megvagyunk majd átírjuk
-# nekem tetszik, de ez innetől kezdve itt is marad a historyban! egyébként szerintem jó, hogy a GPT képes összefoglalni formailag, amit csinálunk és GITHUB szalonképes formában legenerálni.
-## Project overview
-
 In this project we study **extreme water levels** of the two largest Hungarian rivers:
 
-- **Duna (Danube) at Esztergom**
-- **Tisza at Szeged**
+- **Danube (Duna/Donau) at Esztergom**
+- **Tisa (Tisza/Theiß) at Szeged**
 
 for the period **2002–2024**.  
 Using tools from **Extreme Value Theory (EVT)**, our aims are:
@@ -24,7 +20,7 @@ Using tools from **Extreme Value Theory (EVT)**, our aims are:
 - to model **extreme maxima and minima** of daily water levels,
 - to fit **Generalized Extreme Value (GEV)** distributions using the **Block Maxima** method,
 - to fit **Generalized Pareto (GPD)** distributions using the **Peaks-Over-Threshold (POT)** method,
-- to estimate how high a **dam** should be in both cities (for different time periods) so that overflow occurs only about **once every 5000 days**,
+- to estimate how high a **dam** should be in both cities (for different time periods) so that overflow occurs only about **once every 5000 days** which equals roughly 13.7 years,
 - to compare the statistical behaviour of extremes **before and after 2013** and discuss possible links to **climate change**.
 
 We split the data into two subperiods:
