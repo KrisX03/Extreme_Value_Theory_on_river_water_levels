@@ -29,6 +29,7 @@ if (length(to_install) > 0) {
 
 # loading them
 invisible(lapply(pkgs, library, character.only = TRUE))
+rm(to_install)
 
 # ------------------------------------------------------------------------------
 # define rivers and years
@@ -79,8 +80,9 @@ river_data <- river_data %>%
 sum(is.na(river_data)) # we have to filter for the months that are less than 31 days
 river_data <- river_data %>% filter(!is.na(make_date(year, month, day)))
 
-sum(is.na(river_data)) # 2 missing values
+sum(is.na(river_data)) # 2 missing values -> dealing them at the end of the script
 river_data[!complete.cases(river_data), ]
+
 
 # reset the row numbering
 # sort rows by date_id
@@ -88,6 +90,7 @@ river_data <- river_data[order(river_data$date_id), ]
 
 # reset row numbering to 1:n
 rownames(river_data) <- NULL
+
 
 # for curiosity checking the leap year
 nrow(river_data[river_data$year==2002 & river_data$river=="duna",])
@@ -123,6 +126,36 @@ river_data_duna_14_24 <- river_data[
     river_data$year >= 2014 &
     river_data$year <= 2024,
 ]
+
+
+# dealing with NAs
+na_idx <- which(is.na(river_data_duna_14_24$value))  # get the row indices where the 'value' column (water level) is NA
+river_data_duna_14_24[na_idx, ]
+
+# --- our initial idea was to replace the NAs with the mean of the 4 neighbouring days (i-4…i+4),
+# code:
+# for (i in na_idx) {
+  # here we choose a small window around the missing value:
+  # from i-4 to i+4, but cut off at the boundaries of the data frame
+  #start_i <- max(1, i - 4)                                   # left boundary of the window (at least row 1)
+  #end_i   <- min(nrow(river_data_duna_14_24), i + 4)         # right boundary of the window (at most last row)
+  
+  # take neighbour values in that window
+  #neighbours <- river_data_duna_14_24$value[start_i:end_i]   # extract the 'value' entries in this local window
+  
+  # drop any NAs inside the window
+  #neighbours <- neighbours[!is.na(neighbours)]               # keep only those neighbours that are not NA
+  
+  # replace NA with mean of neighbours
+  # so each missing water level is replaced by the average of nearby days (up to 9 neighbours)
+  #river_data_duna_14_24$value[i] <- mean(neighbours)
+#}
+
+# --- but this would not add any real information and could even distort the extremes
+# --- since there were only 2 missing values out of 16802 observations, we decided to simply omit
+# --- those rows instead of imputing them
+
+river_data_duna_14_24 <- na.omit(river_data_duna_14_24)
 
 
 # saving the dataframe
