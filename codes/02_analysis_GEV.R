@@ -29,6 +29,9 @@ invisible(lapply(pkgs, library, character.only = TRUE))  # load each package in 
 rm(to_install)                                           # clean up helper variable, we don't need it later
 
 # ------------------------------------------------------------------------------
+# quick note: In theory, there should be no need to set the working directory manually, because when you open the file
+# R sets it automatically. If this doesn’t work, use setwd to set the “codes” folder as the working directory.
+
 # loading the dataframes
 river_data <- read.csv("../data/river_data.csv")                 # full combined daily river data (both rivers, all years)
 river_data_tisza_02_13 <- read.csv("../data/river_data_tisza_02_13.csv")  # Tisza daily data, 2002–2013 only
