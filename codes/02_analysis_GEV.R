@@ -32,6 +32,8 @@ rm(to_install)                                           # clean up helper varia
 # quick note: In theory, there should be no need to set the working directory manually, because when you open the file
 # R sets it automatically. If this doesn’t work, use setwd to set the “codes” folder as the working directory.
 
+#setwd("C:/Users/User/Desktop/Computational Statistics/Comp_stat_projekt")
+
 # loading the dataframes
 river_data <- read.csv("../data/river_data.csv")                 # full combined daily river data (both rivers, all years)
 river_data_tisza_02_13 <- read.csv("../data/river_data_tisza_02_13.csv")  # Tisza daily data, 2002–2013 only
@@ -46,7 +48,6 @@ T_years <- 5000 / 365
 
 
 # -----------------------------------------------------------------------------
-
 
 ############################################################
 ## TISZA 2014–2024
@@ -65,6 +66,11 @@ minmax_tisza_14_24 <- river_data_tisza_14_24 %>%
 ## 2. Fit GEV to annual maxima (Block Maxima)
 ############################################################
 
+out_dir <- file.path(getwd(), "figures")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+out_file <- file.path(out_dir, "tisza_gev_max_2014_2024_diagnostics.png")
+
 fit_gev_max_tisza_14_24 <- fevd(
   x          = minmax_tisza_14_24$max_value,  # annual maxima
   type       = "GEV",                         # Generalized Extreme Value
@@ -75,24 +81,72 @@ fit_gev_max_tisza_14_24 <- fevd(
 # Parameter estimates, standard errors, AIC/BIC, etc.
 summary(fit_gev_max_tisza_14_24)
 
-# Diagnostic plots: QQ-plot, histogram vs fitted density, return level plot, etc.
-par(mar = c(4, 4, 2, 1))
-plot(fit_gev_max_tisza_14_24)
+# Export clean 2x2 diagnostics plot
+png(filename = out_file, width = 2200, height = 1800, res = 300)
+
+op <- par(no.readonly = TRUE)
+on.exit({ par(op); dev.off() }, add = TRUE)
+
+par(mfrow=c(2,2),
+    mar=c(4.2,4.2,2.0,1.0),
+    oma=c(0,0,3.0,0),
+    cex.lab=0.90, cex.axis=0.85)
+
+plot(fit_gev_max_tisza_14_24, type="qq",      main="", sub="")
+plot(fit_gev_max_tisza_14_24, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_max_tisza_14_24, type="density", main="", sub="")
+plot(fit_gev_max_tisza_14_24, type="rl",      main="", sub="")
+
+mtext("Tisza – annual maxima (2014–2024), GEV",
+      outer=TRUE, line=1.2, cex=1.0)
+
+dev.off()
+par(op)
+
+# Optional: message where it was saved
+message("Saved: ", out_file)
+
 
 ############################################################
 ## 3. Fit GEV to annual minima (via -min trick)
 ############################################################
 
-# For minima we model Y = -min_value as maxima (since min X = -max(-X))
+# Fit: for minima model Y = -min_value as maxima (since min X = -max(-X))
 fit_gev_min_tisza_14_24 <- fevd(
-  x          = -minmax_tisza_14_24$min_value, # negative annual minima
+  x          = -minmax_tisza_14_24$min_value,  # negative annual minima
   type       = "GEV",
   method     = "MLE",
   time.units = "years"
 )
 
-summary(fit_gev_min_tisza_14_24)
-plot(fit_gev_min_tisza_14_24)
+# Console output
+print(summary(fit_gev_min_tisza_14_24))
+
+# Save the 2x2 diagnostic panel
+png(filename = out_file, width = 2200, height = 1800, res = 300)
+
+op <- par(no.readonly = TRUE)
+on.exit({
+  par(op)
+  dev.off()
+}, add = TRUE)
+
+par(mfrow = c(2, 2),
+    mar   = c(4.2, 4.2, 2.0, 1.0),
+    oma   = c(0, 0, 3.0, 0),
+    cex.lab  = 0.90,
+    cex.axis = 0.85)
+
+plot(fit_gev_min_tisza_14_24, type = "qq",      main = "",    sub = "")
+plot(fit_gev_min_tisza_14_24, type = "qq2",     main = NULL)  # keep NULL (no "")
+plot(fit_gev_min_tisza_14_24, type = "density", main = "",    sub = "")
+plot(fit_gev_min_tisza_14_24, type = "rl",      main = "",    sub = "")
+
+mtext("Tisza – Annual minima (2014–2024), GEV fit (x = -min)",
+      outer = TRUE, line = 1.2, cex = 1.0)
+
+dev.off()
+par(op)
 
 ############################################################
 ## 4. 5000-day (~13.7-year) return levels
@@ -137,15 +191,42 @@ minmax_tisza_02_13 <- river_data_tisza_02_13 %>%
 ## 2. GEV fit for annual maxima
 ############################################################
 
+out_dir <- file.path(getwd(), "figures")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+out_file <- file.path(out_dir, "tisza_gev_max_2002_2013_diagnostics.png")
+
 fit_gev_max_tisza_02_13 <- fevd(
-  x          = minmax_tisza_02_13$max_value,
+  x          = minmax_tisza_02_13$max_value,  # annual maxima
   type       = "GEV",
   method     = "MLE",
   time.units = "years"
 )
 
 summary(fit_gev_max_tisza_02_13)
-plot(fit_gev_max_tisza_02_13)
+
+png(filename = out_file, width = 2200, height = 1800, res = 300)
+
+op <- par(no.readonly = TRUE)
+on.exit({ par(op); dev.off() }, add = TRUE)
+
+par(mfrow=c(2,2),
+    mar=c(4.2,4.2,2.0,1.0),
+    oma=c(0,0,3.0,0),
+    cex.lab=0.90, cex.axis=0.85)
+
+plot(fit_gev_max_tisza_02_13, type="qq",      main="", sub="")
+plot(fit_gev_max_tisza_02_13, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_max_tisza_02_13, type="density", main="", sub="")
+plot(fit_gev_max_tisza_02_13, type="rl",      main="", sub="")
+
+mtext("Tisza River – annual maxima (2002–2013), GEV",
+      outer=TRUE, line=1.2, cex=1.0)
+
+dev.off()
+par(op)
+
+message("Saved: ", out_file)
 
 ############################################################
 ## 3. Gumbel fit for annual minima (instead of full GEV)
@@ -154,15 +235,44 @@ plot(fit_gev_max_tisza_02_13)
 # NOTE: Full 3-parameter GEV for minima was numerically unstable here,
 # so we switch to the simpler Gumbel model (shape ξ = 0).
 # We still work on Y = -min_value to treat minima as maxima.
+out_dir <- file.path(getwd(), "figures")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+out_file <- file.path(out_dir, "tisza_gumbel_min_2002_2013_diagnostics.png")
+
 fit_gumbel_min_tisza_02_13 <- fevd(
   x          = -minmax_tisza_02_13$min_value,  # negative annual minima
-  type       = "Gumbel",                       # GEV with ξ = 0
+  type       = "Gumbel",                       # GEV with xi = 0
   method     = "MLE",
   time.units = "years"
 )
 
 summary(fit_gumbel_min_tisza_02_13)
-plot(fit_gumbel_min_tisza_02_13)
+
+png(filename = out_file, width = 2200, height = 1800, res = 300)
+
+op <- par(no.readonly = TRUE)
+on.exit({ par(op); dev.off() }, add = TRUE)
+
+par(mfrow=c(2,2),
+    mar=c(4.2,4.2,2.0,1.0),
+    oma=c(0,0,3.0,0),
+    cex.lab=0.90, cex.axis=0.85)
+
+plot(fit_gumbel_min_tisza_02_13, type="qq",      main="", sub="")
+plot(fit_gumbel_min_tisza_02_13, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gumbel_min_tisza_02_13, type="density", main="", sub="")
+plot(fit_gumbel_min_tisza_02_13, type="rl",      main="", sub="")
+
+mtext("Tisza River – annual minima (2002–2013), Gumbel (fit to -min)",
+      outer=TRUE, line=1.2, cex=1.0)
+
+dev.off()
+par(op)
+
+message("Saved: ", out_file)
+
+
 
 ############################################################
 ## 4. 5000-day (~13.7-year) return levels
@@ -206,29 +316,83 @@ minmax_duna_02_13 <- river_data_duna_02_13 %>%
 ## 2. GEV fit for annual maxima
 ############################################################
 
+out_dir <- file.path(getwd(), "figures")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+out_file <- file.path(out_dir, "danube_gev_max_2002_2013_diagnostics.png")
+
 fit_gev_max_duna_02_13 <- fevd(
-  x          = minmax_duna_02_13$max_value,
+  x          = minmax_duna_02_13$max_value,  # annual maxima
   type       = "GEV",
   method     = "MLE",
   time.units = "years"
 )
 
 summary(fit_gev_max_duna_02_13)
-plot(fit_gev_max_duna_02_13)
+
+png(filename = out_file, width = 2200, height = 1800, res = 300)
+
+op <- par(no.readonly = TRUE)
+on.exit({ par(op); dev.off() }, add = TRUE)
+
+par(mfrow=c(2,2),
+    mar=c(4.2,4.2,2.0,1.0),
+    oma=c(0,0,3.0,0),
+    cex.lab=0.90, cex.axis=0.85)
+
+plot(fit_gev_max_duna_02_13, type="qq",      main="", sub="")
+plot(fit_gev_max_duna_02_13, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_max_duna_02_13, type="density", main="", sub="")
+plot(fit_gev_max_duna_02_13, type="rl",      main="", sub="")
+
+mtext("Danube River – annual maxima (2002–2013), GEV",
+      outer=TRUE, line=1.2, cex=1.0)
+
+dev.off()
+par(op)
+
+message("Saved: ", out_file)
 
 ############################################################
 ## 3. GEV fit for annual minima (via -min trick)
 ############################################################
 
+out_dir <- file.path(getwd(), "figures")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+out_file <- file.path(out_dir, "danube_gev_min_2002_2013_diagnostics.png")
+
 fit_gev_min_duna_02_13 <- fevd(
-  x          = -minmax_duna_02_13$min_value,
+  x          = -minmax_duna_02_13$min_value,  # negative annual minima
   type       = "GEV",
   method     = "MLE",
   time.units = "years"
 )
 
 summary(fit_gev_min_duna_02_13)
-plot(fit_gev_min_duna_02_13)
+
+png(filename = out_file, width = 2200, height = 1800, res = 300)
+
+op <- par(no.readonly = TRUE)
+on.exit({ par(op); dev.off() }, add = TRUE)
+
+par(mfrow=c(2,2),
+    mar=c(4.2,4.2,2.0,1.0),
+    oma=c(0,0,3.0,0),
+    cex.lab=0.90, cex.axis=0.85)
+
+plot(fit_gev_min_duna_02_13, type="qq",      main="", sub="")
+plot(fit_gev_min_duna_02_13, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_min_duna_02_13, type="density", main="", sub="")
+plot(fit_gev_min_duna_02_13, type="rl",      main="", sub="")
+
+mtext("Danube River – annual minima (2002–2013), GEV (fit to -min)",
+      outer=TRUE, line=1.2, cex=1.0)
+
+dev.off()
+par(op)
+
+message("Saved: ", out_file)
 
 ############################################################
 ## 4. 5000-day return levels
@@ -271,29 +435,85 @@ minmax_duna_14_24 <- river_data_duna_14_24 %>%
 ## 2. GEV fit for annual maxima
 ############################################################
 
+out_dir <- file.path(getwd(), "figures")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+out_file <- file.path(out_dir, "danube_gev_max_2014_2024_diagnostics.png")
+
 fit_gev_max_duna_14_24 <- fevd(
-  x          = minmax_duna_14_24$max_value,
+  x          = minmax_duna_14_24$max_value,  # annual maxima
   type       = "GEV",
   method     = "MLE",
   time.units = "years"
 )
 
 summary(fit_gev_max_duna_14_24)
-plot(fit_gev_max_duna_14_24)
+
+png(filename = out_file, width = 2200, height = 1800, res = 300)
+
+op <- par(no.readonly = TRUE)
+on.exit({ par(op); dev.off() }, add = TRUE)
+
+par(mfrow=c(2,2),
+    mar=c(4.2,4.2,2.0,1.0),
+    oma=c(0,0,3.0,0),
+    cex.lab=0.90, cex.axis=0.85)
+
+plot(fit_gev_max_duna_14_24, type="qq",      main="", sub="")
+plot(fit_gev_max_duna_14_24, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_max_duna_14_24, type="density", main="", sub="")
+plot(fit_gev_max_duna_14_24, type="rl",      main="", sub="")
+
+mtext("Danube River – annual maxima (2014–2024), GEV",
+      outer=TRUE, line=1.2, cex=1.0)
+
+dev.off()
+par(op)
+
+message("Saved: ", out_file)
+
+
 
 ############################################################
 ## 3. GEV fit for annual minima (via -min trick)
 ############################################################
 
+out_dir <- file.path(getwd(), "figures")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+out_file <- file.path(out_dir, "danube_gev_min_2014_2024_diagnostics.png")
+
 fit_gev_min_duna_14_24 <- fevd(
-  x          = -minmax_duna_14_24$min_value,
+  x          = -minmax_duna_14_24$min_value,  # negative annual minima
   type       = "GEV",
   method     = "MLE",
   time.units = "years"
 )
 
 summary(fit_gev_min_duna_14_24)
-plot(fit_gev_min_duna_14_24)
+
+png(filename = out_file, width = 2200, height = 1800, res = 300)
+
+op <- par(no.readonly = TRUE)
+on.exit({ par(op); dev.off() }, add = TRUE)
+
+par(mfrow=c(2,2),
+    mar=c(4.2,4.2,2.0,1.0),
+    oma=c(0,0,3.0,0),
+    cex.lab=0.90, cex.axis=0.85)
+
+plot(fit_gev_min_duna_14_24, type="qq",      main="", sub="")
+plot(fit_gev_min_duna_14_24, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_min_duna_14_24, type="density", main="", sub="")
+plot(fit_gev_min_duna_14_24, type="rl",      main="", sub="")
+
+mtext("Danube River – annual minima (2014–2024), GEV (fit to -min)",
+      outer=TRUE, line=1.2, cex=1.0)
+
+dev.off()
+par(op)
+
+message("Saved: ", out_file)
 
 ############################################################
 ## 4. 5000-day return levels
@@ -341,13 +561,12 @@ minmax_duna_14_24 <- minmax_duna_14_24 %>%
 ############################################################
 
 # Combine both periods into one data frame with a period indicator
-tisza_max_all <- bind_rows(
-  minmax_tisza_02_13 %>% select(year, max_value, period),
-  minmax_tisza_14_24 %>% select(year, max_value, period)
+tisza_max_all <- dplyr::bind_rows(
+  minmax_tisza_02_13 %>% dplyr::select(year, max_value, period),
+  minmax_tisza_14_24 %>% dplyr::select(year, max_value, period)
 ) %>%
-  mutate(
-    period = factor(period, levels = c("early", "late"))
-  )
+  dplyr::mutate(period = factor(period, levels = c("early", "late")))
+
 
 # H0: stationary GEV (μ, σ, ξ are the same for both periods)
 fit_const_tisza_max <- fevd(
@@ -399,14 +618,15 @@ lr_ns_tisza_max
 ## TISZA – MINIMA: 2002–2013 vs 2014–2024
 ############################################################
 
-tisza_min_all <- bind_rows(
-  minmax_tisza_02_13 %>% select(year, min_value, period),
-  minmax_tisza_14_24 %>% select(year, min_value, period)
+tisza_min_all <- dplyr::bind_rows(
+  minmax_tisza_02_13 %>% dplyr::select(year, min_value, period),
+  minmax_tisza_14_24 %>% dplyr::select(year, min_value, period)
 ) %>%
-  mutate(
+  dplyr::mutate(
     period  = factor(period, levels = c("early", "late")),
     neg_min = -min_value   # transform minima to maxima for GEV modelling
   )
+
 
 # H0: stationary GEV for Y = -min_value
 fit_const_tisza_min <- fevd(
@@ -455,13 +675,14 @@ lr_ns_tisza_min
 ## DUNA – MAXIMA: 2002–2013 vs 2014–2024
 ############################################################
 
-duna_max_all <- bind_rows(
-  minmax_duna_02_13 %>% select(year, max_value, period),
-  minmax_duna_14_24 %>% select(year, max_value, period)
+duna_max_all <- dplyr::bind_rows(
+  minmax_duna_02_13 %>% dplyr::select(year, max_value, period),
+  minmax_duna_14_24 %>% dplyr::select(year, max_value, period)
 ) %>%
-  mutate(
+  dplyr::mutate(
     period = factor(period, levels = c("early", "late"))
   )
+
 
 # H0: stationary GEV
 fit_const_duna_max <- fevd(
@@ -510,14 +731,15 @@ lr_ns_duna_max
 ## DUNA – MINIMA: 2002–2013 vs 2014–2024
 ############################################################
 
-duna_min_all <- bind_rows(
-  minmax_duna_02_13 %>% select(year, min_value, period),
-  minmax_duna_14_24 %>% select(year, min_value, period)
+duna_min_all <- dplyr::bind_rows(
+  minmax_duna_02_13 %>% dplyr::select(year, min_value, period),
+  minmax_duna_14_24 %>% dplyr::select(year, min_value, period)
 ) %>%
-  mutate(
+  dplyr::mutate(
     period  = factor(period, levels = c("early", "late")),
     neg_min = -min_value  # transform minima to maxima
   )
+
 
 # H0: stationary GEV for Y = -min_value
 fit_const_duna_min <- fevd(
@@ -625,4 +847,5 @@ ci_gev_min_duna_14_24_param <- ci(
 
 ci_gev_min_duna_02_13_param
 ci_gev_min_duna_14_24_param
+
 
