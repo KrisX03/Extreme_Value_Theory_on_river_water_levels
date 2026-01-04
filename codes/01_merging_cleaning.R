@@ -32,6 +32,9 @@ invisible(lapply(pkgs, library, character.only = TRUE))
 rm(to_install)
 
 # ------------------------------------------------------------------------------
+# quick note: In theory, there should be no need to set the working directory manually, because when you open the file
+# R sets it automatically. If this doesn’t work, use setwd to set the “codes” folder as the working directory.
+
 # define rivers and years
 rivers <- c("duna", "tisza")
 years  <- 2002:2024
