@@ -28,10 +28,10 @@ rm(to_install)                                           # clean up helper varia
 # ------------------------------------------------------------------------------
 # loading the dataframes
 river_data <- read.csv("../data/river_data.csv")                 # full combined daily river data (both rivers, all years)
-river_data_tisza_02_13 <- read.csv("../data/river_data_tisza_02_13.csv")  # Tisza daily data, 2002–2013 only
-river_data_tisza_14_24 <- read.csv("../data/river_data_tisza_14_24.csv")  # Tisza daily data, 2014–2024 only
-river_data_duna_02_13  <- read.csv("../data/river_data_duna_02_13.csv")   # Duna daily data, 2002–2013 only
-river_data_duna_14_24  <- read.csv("../data/river_data_duna_14_24.csv")   # Duna daily data, 2014–2024 only
+river_data_tisza_02_13 <- read.csv("../data/river_data_tisza_02_13.csv")  # Tisza daily data, 2002-2013 only
+river_data_tisza_14_24 <- read.csv("../data/river_data_tisza_14_24.csv")  # Tisza daily data, 2014-2024 only
+river_data_duna_02_13  <- read.csv("../data/river_data_duna_02_13.csv")   # Duna daily data, 2002-2013 only
+river_data_duna_14_24  <- read.csv("../data/river_data_duna_14_24.csv")   # Duna daily data, 2014-2024 only
 
 
 # first we started to analyse one database to see how we should decide the threshold
@@ -49,6 +49,37 @@ threshrange.plot(
   r    = c(300, 650),  
   nint = 20
 )
+
+# the titles are not so nice so recreate it with better ones
+
+# precreate the picture to save
+png("../figures/threshrange_duna_2002_2013.png", width = 800, height = 600, res = 120)
+
+# save old graphics settings
+op <- par(no.readonly = TRUE)
+
+# turn off all automatic annotations (main title, axis labels, etc...)
+par(ann = FALSE)
+
+# threshold range plot without own title
+threshrange.plot(
+  x    = river_data_duna_02_13$value,
+  r    = c(300, 650),
+  nint = 20
+)
+
+# restore original par setting
+par(op)
+
+# custom title
+title(main = "Threshold range plot - Duna 2002-2013")
+
+# axis labels
+title(xlab = "Threshold (cm)")
+title(ylab = "Estimated GPD parameters (upper is scale, lower is shape)")
+
+dev.off()
+
 # these are the fitted (reparameterized) scale and shape parameters over
 # a range of equally spaced thresholds
 # from this plot, we should choose the threshold where the estimates become roughly
@@ -56,9 +87,38 @@ threshrange.plot(
 # threshold is still low enough so that we keep as many data points as possible
 # in the extreme value fit
 
-dev.off()
 mrlplot(river_data_duna_02_13$value,
-        xlim = c(300, 650))  
+        xlim = c(300, 650))
+
+# do the nice plotting again
+
+# precreate the picture to save
+png("../figures/mrl_duna_2002_2013.png", width = 800, height = 600, res = 120)
+
+# save old graphics settings
+op <- par(no.readonly = TRUE)
+
+# turn off all automatic annotations (main title, axis labels, etc...)
+par(ann = FALSE)
+
+# mean residual life plot without its own title
+mrlplot(
+  river_data_duna_02_13$value,
+  xlim = c(300, 650)
+)
+
+# restore original par setting
+par(op)
+
+# custom title
+title(main = "Mean residual life plot - Duna 2002-2013")
+
+# axis labels
+title(xlab = "Threshold (cm)")
+title(ylab = "Mean excess")
+
+dev.off()
+
 # here the idea is to choose a threshold where the graph looks roughly like a
 # straight line (only small random wiggles) and keeps this shape as the threshold gets higher
 
@@ -122,18 +182,18 @@ fit_gpd_pot <- function(dat, name = "", tail = c("max", "min"),
 }
 
 
-## --------------------- DUNA 2002–2013 -----------------------------------
-# Fit GPD POT models to Duna data for the first period (2002–2013)
+## --------------------- DUNA 2002-2013 -----------------------------------
+# Fit GPD POT models to Duna data for the first period (2002-2013)
 # First for maxima (floods)
 gpd_duna_02_13_max <- fit_gpd_pot(
   river_data_duna_02_13,
-  name        = "Duna 2002–2013",
+  name        = "Duna 2002-2013",
   tail        = "max",
   thresh_prob = 0.95   # 95% quantile as threshold (top 5% extremes)
 )
 
 # Interpretation:
-# - We model Duna daily *high* water levels in 2002–2013 using a GPD above 404 cm.
+# - We model Duna daily *high* water levels in 2002-2013 using a GPD above 404 cm.
 # - scale ≈ 111 cm: the typical size of exceedances over 404 cm is around 100 cm (quite large floods).
 # - shape ≈ -0.08 (slightly negative): the upper tail is light and slightly bounded,
 #   meaning extremely huge floods become less and less likely.
@@ -143,7 +203,7 @@ gpd_duna_02_13_max <- fit_gpd_pot(
 # Then for minima (low-water events), using flipped values -value
 gpd_duna_02_13_min <- fit_gpd_pot(
   river_data_duna_02_13,
-  name        = "Duna 2002–2013",
+  name        = "Duna 2002-2013",
   tail        = "min",
   thresh_prob = 0.95
 )
@@ -156,11 +216,11 @@ gpd_duna_02_13_min <- fit_gpd_pot(
 #   there is a lower limit to how extreme the low water can get (harder to get extremely low).
 
 
-## --------------------- DUNA 2014–2024 -----------------------------------
-# Same as above but for the second period of Duna (2014–2024)
+## --------------------- DUNA 2014-2024 -----------------------------------
+# Same as above but for the second period of Duna (2014-2024)
 gpd_duna_14_24_max <- fit_gpd_pot(
   river_data_duna_14_24,
-  name        = "Duna 2014–2024",
+  name        = "Duna 2014-2024",
   tail        = "max",
   thresh_prob = 0.95
 )
@@ -170,56 +230,56 @@ gpd_duna_14_24_max <- fit_gpd_pot(
 #   meaning fewer very high water levels overall.
 # - scale dropped from ~111 to ~70 → typical flood exceedances above threshold are much smaller now.
 # - shape moved slightly positive (~0.03), but close to 0 → the tail is still not extremely heavy.
-# - Overall: recent Duna floods seem less extreme (smaller scale) than in 2002–2013.
+# - Overall: recent Duna floods seem less extreme (smaller scale) than in 2002-2013.
 
 gpd_duna_14_24_min <- fit_gpd_pot(
   river_data_duna_14_24,
-  name        = "Duna 2014–2024",
+  name        = "Duna 2014-2024",
   tail        = "min",
   thresh_prob = 0.95
 )
 
 # Interpretation:
-# - Low-water model for Duna in 2014–2024.
+# - Low-water model for Duna in 2014-2024.
 # - scale ≈ 24 vs 27 previously → typical low-water extremes shrank a bit.
 # - shape ≈ -0.36 vs -0.49 → tail is still bounded but a bit “less bounded” than before.
-# - Overall: extremely low levels are still limited, but perhaps slightly less extreme structure than in 2002–2013.
+# - Overall: extremely low levels are still limited, but perhaps slightly less extreme structure than in 2002-2013.
 
 
-## --------------------- TISZA 2002–2013 ----------------------------------
+## --------------------- TISZA 2002-2013 ----------------------------------
 # Now do exactly the same GPD POT fitting for the Tisza river, first period
 gpd_tisza_02_13_max <- fit_gpd_pot(
   river_data_tisza_02_13,
-  name        = "Tisza 2002–2013",
+  name        = "Tisza 2002-2013",
   tail        = "max",
   thresh_prob = 0.95
 )
 
 # Interpretation:
-# - Very high threshold: Tisza floods in 2002–2013 were really big (662+ cm).
+# - Very high threshold: Tisza floods in 2002-2013 were really big (662+ cm).
 # - scale ≈ 120 cm: very large typical exceedances above that threshold → extremely big floods.
 # - shape ≈ -0.19: moderately negative shape → upper tail is bounded; extremely huge levels are rare.
 # - This is our baseline model for old-period Tisza floods.
 
 gpd_tisza_02_13_min <- fit_gpd_pot(
   river_data_tisza_02_13,
-  name        = "Tisza 2002–2013",
+  name        = "Tisza 2002-2013",
   tail        = "min",
   thresh_prob = 0.95
 )
 
 # Interpretation:
-# - Low-water model for Tisza 2002–2013.
+# - Low-water model for Tisza 2002-2013.
 # - scale ≈ 12.7: typical exceedances over low-water threshold are modest in size.
 # - shape ≈ -0.52: strongly negative → very bounded lower tail (hard limit on how low it goes).
 # - Tisza low water in this period is extreme but quite bounded.
 
 
-## --------------------- TISZA 2014–2024 ----------------------------------
+## --------------------- TISZA 2014-2024 ----------------------------------
 # And Tisza, second period
 gpd_tisza_14_24_max <- fit_gpd_pot(
   river_data_tisza_14_24,
-  name        = "Tisza 2014–2024",
+  name        = "Tisza 2014-2024",
   tail        = "max",
   thresh_prob = 0.95
 )
@@ -232,7 +292,7 @@ gpd_tisza_14_24_max <- fit_gpd_pot(
 
 gpd_tisza_14_24_min <- fit_gpd_pot(
   river_data_tisza_14_24,
-  name        = "Tisza 2014–2024",
+  name        = "Tisza 2014-2024",
   tail        = "min",
   thresh_prob = 0.95
 )
@@ -283,19 +343,19 @@ CI_tisza_14_24_GPD <- ci(gpd_tisza_14_24_max$fit,
                          return.period = rp_5000_days)
 
 # These CIs tell us how uncertain the design height is. If CIs for the two periods do not
-# overlap much, that suggests a clear change in flood risk between 2002–2013 and 2014–2024.
+# overlap much, that suggests a clear change in flood risk between 2002-2013 and 2014-2024.
 # im not sure about this overlapping interpretation - Kristóf
 
 # Summarise the 5000-day return levels in a single small data frame for easier comparison
 dam_summary <- data.frame(
   river   = c("Duna", "Duna", "Tisza", "Tisza"),          # which river
-  period  = c("2002–2013", "2014–2024", "2002–2013", "2014–2024"),  # which time period
+  period  = c("2002-2013", "2014-2024", "2002-2013", "2014-2024"),  # which time period
   #method  = "GPD (POT maxima)",                           # method description (POT GPD on maxima)
   RL_5000 = c(
-    as.numeric(RL_duna_02_13_GPD),                        # 5000-day RL for Duna 2002–2013
-    as.numeric(RL_duna_14_24_GPD),                        # 5000-day RL for Duna 2014–2024
-    as.numeric(RL_tisza_02_13_GPD),                       # 5000-day RL for Tisza 2002–2013
-    as.numeric(RL_tisza_14_24_GPD)                        # 5000-day RL for Tisza 2014–2024
+    as.numeric(RL_duna_02_13_GPD),                        # 5000-day RL for Duna 2002-2013
+    as.numeric(RL_duna_14_24_GPD),                        # 5000-day RL for Duna 2014-2024
+    as.numeric(RL_tisza_02_13_GPD),                       # 5000-day RL for Tisza 2002-2013
+    as.numeric(RL_tisza_14_24_GPD)                        # 5000-day RL for Tisza 2014-2024
   )
 )
 
@@ -304,7 +364,7 @@ dam_summary   # look at the table: one row per river-period, with the suggested 
 # with CI:
 dam_summary_CI <- data.frame(
   river     = c("Duna", "Duna", "Tisza", "Tisza"),              # which river
-  period    = c("2002–2013", "2014–2024", "2002–2013", "2014–2024"),
+  period    = c("2002-2013", "2014-2024", "2002-2013", "2014-2024"),
   RL_5000   = c(
     as.numeric(RL_duna_02_13_GPD),
     as.numeric(RL_duna_14_24_GPD),
@@ -329,18 +389,18 @@ dam_summary_CI
 
 # Interpretation:
 # - Duna:
-#   * 2002–2013: a 5000-day flood level is ~904 cm.
-#   * 2014–2024: a 5000-day flood level is ~758 cm.
+#   * 2002-2013: a 5000-day flood level is ~904 cm.
+#   * 2014-2024: a 5000-day flood level is ~758 cm.
 #   → Suggested dam height for this risk level would be much higher in the earlier period.
-#     Flood risk (in terms of extreme height) seems to have decreased in 2014–2024.
+#     Flood risk (in terms of extreme height) seems to have decreased in 2014-2024.
 #
 # - Tisza:
-#   * 2002–2013: RL_5000 ≈ 1068 cm (!! very high extreme floods).
-#   * 2014–2024: RL_5000 ≈ 613 cm, which is dramatically lower.
+#   * 2002-2013: RL_5000 ≈ 1068 cm (!! very high extreme floods).
+#   * 2014-2024: RL_5000 ≈ 613 cm, which is dramatically lower.
 #   → Huge reduction in modeled extreme flood height compared to the earlier period.
 #
-# Overall: according to the GPD fits, both rivers show smaller extreme flood levels in 2014–2024
-# than in 2002–2013, with a particularly large drop for the Tisza.
+# Overall: according to the GPD fits, both rivers show smaller extreme flood levels in 2014-2024
+# than in 2002-2013, with a particularly large drop for the Tisza.
 
 
 
@@ -352,7 +412,7 @@ dam_summary_CI
 # parcov.fevd(gpd_duna_02_13_max$fit)      # example how to get covariance matrix
 
 # This function compares the GPD parameters (scale and shape) between two fits:
-# typically fit1 for 2002–2013, fit2 for 2014–2024.
+# typically fit1 for 2002-2013, fit2 for 2014-2024.
 # It calculates Z-scores and p-values to see whether the change is significant at 5%.
 compare_params <- function(fit1, fit2, label1, label2) {
   p1 <- fit1$results$par           # parameter vector (scale, shape) for first fit
@@ -408,15 +468,15 @@ compare_params <- function(fit1, fit2, label1, label2) {
 
 ## ---- RUN FOR EACH RIVER & TAIL ----
 # once again: WALD TEST!
-# Duna maxima: compare GPD parameters between 2002–2013 and 2014–2024
+# Duna maxima: compare GPD parameters between 2002-2013 and 2014-2024
 cmp_duna_max <- compare_params(
   gpd_duna_02_13_max$fit, gpd_duna_14_24_max$fit,
-  "Duna max 2002–2013", "Duna max 2014–2024"
+  "Duna max 2002-2013", "Duna max 2014-2024"
 )
 
 # Interpretation:
 # - For Duna flood extremes, the *scale* parameter decreased significantly (p < 0.01),
-#   meaning that typical size of extreme exceedances is clearly smaller in 2014–2024.
+#   meaning that typical size of extreme exceedances is clearly smaller in 2014-2024.
 # - The *shape* parameter change is NOT significant (p ≈ 0.35),
 #   so the overall tail heaviness/boundedness is not statistically different at 5%.
 # - In short: for Duna maxima, the scale shrank significantly, tail shape stayed similar.
@@ -428,7 +488,7 @@ cmp_duna_max <- compare_params(
 # Duna minima (fitted on -value): compare how low-water tail changed
 cmp_duna_min <- compare_params(
   gpd_duna_02_13_min$fit, gpd_duna_14_24_min$fit,
-  "Duna min 2002–2013", "Duna min 2014–2024"
+  "Duna min 2002-2013", "Duna min 2014-2024"
 )
 
 # Interpretation:
@@ -440,21 +500,21 @@ cmp_duna_min <- compare_params(
 # Tisza maxima
 cmp_tisza_max <- compare_params(
   gpd_tisza_02_13_max$fit, gpd_tisza_14_24_max$fit,
-  "Tisza max 2002–2013", "Tisza max 2014–2024"
+  "Tisza max 2002-2013", "Tisza max 2014-2024"
 )
 
 # Interpretation:
 # - For Tisza flood extremes, *both* scale and shape changed significantly (p ≪ 0.01).
 # - Scale dropped strongly: typical exceedances are much smaller now.
 # - Shape became much more negative → tail became much more bounded,
-#   i.e. the risk of extremely huge floods decreased a lot in 2014–2024.
+#   i.e. the risk of extremely huge floods decreased a lot in 2014-2024.
 # - Statistically, the flood distribution for Tisza changed a lot between the two periods.
 
 
 # Tisza minima
 cmp_tisza_min <- compare_params(
   gpd_tisza_02_13_min$fit, gpd_tisza_14_24_min$fit,
-  "Tisza min 2002–2013", "Tisza min 2014–2024"
+  "Tisza min 2002-2013", "Tisza min 2014-2024"
 )
 
 # Interpretation:
@@ -510,25 +570,25 @@ gpd_moments <- function(fit, label) {
 }
 
 # Moments for maxima in all river-period combinations
-mom_duna_02_13_max  <- gpd_moments(gpd_duna_02_13_max$fit,  "Duna max 2002–2013")
+mom_duna_02_13_max  <- gpd_moments(gpd_duna_02_13_max$fit,  "Duna max 2002-2013")
 
 # Interpretation:
-# - For Duna maxima 2002–2013, the average exceedance above the 404 cm threshold is ~103 cm,
+# - For Duna maxima 2002-2013, the average exceedance above the 404 cm threshold is ~103 cm,
 #   with standard deviation ~96 cm. So extreme floods are large and quite variable.
 
-mom_duna_14_24_max  <- gpd_moments(gpd_duna_14_24_max$fit,  "Duna max 2014–2024")
+mom_duna_14_24_max  <- gpd_moments(gpd_duna_14_24_max$fit,  "Duna max 2014-2024")
 
 # Interpretation:
-# - In 2014–2024, average exceedance is ~72 cm (vs 103 cm before) and variability is smaller (~74 vs 96).
+# - In 2014-2024, average exceedance is ~72 cm (vs 103 cm before) and variability is smaller (~74 vs 96).
 # - So “typical” Duna extreme floods became smaller and slightly less variable.
 
-mom_tisza_02_13_max <- gpd_moments(gpd_tisza_02_13_max$fit, "Tisza max 2002–2013")
+mom_tisza_02_13_max <- gpd_moments(gpd_tisza_02_13_max$fit, "Tisza max 2002-2013")
 
 # Interpretation:
-# - For Tisza maxima 2002–2013, average exceedance above ~663 cm is ~100 cm with SD ~85 cm.
+# - For Tisza maxima 2002-2013, average exceedance above ~663 cm is ~100 cm with SD ~85 cm.
 # - So big and quite variable floods in the early period.
 
-mom_tisza_14_24_max <- gpd_moments(gpd_tisza_14_24_max$fit, "Tisza max 2014–2024")
+mom_tisza_14_24_max <- gpd_moments(gpd_tisza_14_24_max$fit, "Tisza max 2014-2024")
 
 # Interpretation:
 # - Recent Tisza floods: mean exceedance dropped to ~41 cm (from 100 cm),
@@ -539,25 +599,25 @@ mom_tisza_14_24_max <- gpd_moments(gpd_tisza_14_24_max$fit, "Tisza max 2014–20
 # we *can* also do it for minima (on the flipped scale, i.e. for -value):
 # here the moments describe exceedances of -value above its threshold,
 # which corresponds to extremely low original water levels.
-mom_duna_02_13_min  <- gpd_moments(gpd_duna_02_13_min$fit,  "Duna min 2002–2013 (on -value)")
+mom_duna_02_13_min  <- gpd_moments(gpd_duna_02_13_min$fit,  "Duna min 2002-2013 (on -value)")
 
 # Interpretation (on -value scale):
-# - For Duna low water 2002–2013, the average “depth” of low-water extremes below the threshold
+# - For Duna low water 2002-2013, the average “depth” of low-water extremes below the threshold
 #   corresponds to about 18 units with SD ~13 units. Larger numbers here mean more extreme lows.
 
-mom_duna_14_24_min  <- gpd_moments(gpd_duna_14_24_min$fit,  "Duna min 2014–2024 (on -value)")
+mom_duna_14_24_min  <- gpd_moments(gpd_duna_14_24_min$fit,  "Duna min 2014-2024 (on -value)")
 
 # Interpretation:
 # - For Duna low water, mean and SD on the -value scale are similar (~18, ~14) between periods.
 # - This fits our earlier parameter comparison: no strong change in low-water tail behaviour.
 
-mom_tisza_02_13_min <- gpd_moments(gpd_tisza_02_13_min$fit, "Tisza min 2002–2013 (on -value)")
+mom_tisza_02_13_min <- gpd_moments(gpd_tisza_02_13_min$fit, "Tisza min 2002-2013 (on -value)")
 
 # Interpretation:
 # - Old Tisza low water: mean exceedance ~8.35, SD ~5.86 (on -value scale),
 #   so low-water extremes have moderate size and variation.
 
-mom_tisza_14_24_min <- gpd_moments(gpd_tisza_14_24_min$fit, "Tisza min 2014–2024 (on -value)")
+mom_tisza_14_24_min <- gpd_moments(gpd_tisza_14_24_min$fit, "Tisza min 2014-2024 (on -value)")
 
 # Interpretation:
 # - Recent Tisza low water: mean exceedance dropped to ~5.8 and SD to ~4.4.
@@ -615,27 +675,27 @@ get_RL_table_min <- function(fit, label) {
 ## DUNA
 # Put together return levels for Duna maxima:
 RL_duna_max <- rbind(
-  get_RL_table_max(gpd_duna_02_13_max$fit, "Duna max 2002–2013"),
-  get_RL_table_max(gpd_duna_14_24_max$fit, "Duna max 2014–2024")
+  get_RL_table_max(gpd_duna_02_13_max$fit, "Duna max 2002-2013"),
+  get_RL_table_max(gpd_duna_14_24_max$fit, "Duna max 2014-2024")
 )
 
 # And for Duna minima:
 RL_duna_min <- rbind(
-  get_RL_table_min(gpd_duna_02_13_min$fit, "Duna min 2002–2013"),
-  get_RL_table_min(gpd_duna_14_24_min$fit, "Duna min 2014–2024")
+  get_RL_table_min(gpd_duna_02_13_min$fit, "Duna min 2002-2013"),
+  get_RL_table_min(gpd_duna_14_24_min$fit, "Duna min 2014-2024")
 )
 
 ## TISZA
 # The same for Tisza maxima:
 RL_tisza_max <- rbind(
-  get_RL_table_max(gpd_tisza_02_13_max$fit, "Tisza max 2002–2013"),
-  get_RL_table_max(gpd_tisza_14_24_max$fit, "Tisza max 2014–2024")
+  get_RL_table_max(gpd_tisza_02_13_max$fit, "Tisza max 2002-2013"),
+  get_RL_table_max(gpd_tisza_14_24_max$fit, "Tisza max 2014-2024")
 )
 
 # And Tisza minima:
 RL_tisza_min <- rbind(
-  get_RL_table_min(gpd_tisza_02_13_min$fit, "Tisza min 2002–2013"),
-  get_RL_table_min(gpd_tisza_14_24_min$fit, "Tisza min 2014–2024")
+  get_RL_table_min(gpd_tisza_02_13_min$fit, "Tisza min 2002-2013"),
+  get_RL_table_min(gpd_tisza_14_24_min$fit, "Tisza min 2014-2024")
 )
 
 # Print all RL tables so we can visually compare how high/low extremes differ
@@ -648,7 +708,7 @@ RL_tisza_min <- rbind(
 RL_duna_max
 
 # Interpretation:
-# - For every RP (2, 5, 10, 20, 50 years and 5000 days), the return level is higher in 2002–2013 than in 2014–2024.
+# - For every RP (2, 5, 10, 20, 50 years and 5000 days), the return level is higher in 2002-2013 than in 2014-2024.
 # - Example: 10-year flood:
 #   * old period: ~881 cm,
 #   * new period: ~733 cm.
@@ -658,8 +718,8 @@ RL_duna_max
 RL_duna_min
 
 # Interpretation (!!! smaller / more negative RL = more extreme low water):
-# - In 2002–2013, RLs cluster around 0 cm, i.e. low-water extremes are not extremely negative.
-# - In 2014–2024, RLs are much more negative (e.g. 10-year low ≈ -15.2 cm).
+# - In 2002-2013, RLs cluster around 0 cm, i.e. low-water extremes are not extremely negative.
+# - In 2014-2024, RLs are much more negative (e.g. 10-year low ≈ -15.2 cm).
 # - This suggests that Duna low-water events might actually have become more severe (lower levels)
 #   in the more recent period, while floods got smaller.
 
@@ -668,7 +728,7 @@ RL_tisza_max
 
 # Interpretation:
 # - Early-period Tisza floods are huge: e.g. 10-year RL ≈ 1055 cm.
-# - In 2014–2024, all RLs are around 602–616 cm, almost flat with RP.
+# - In 2014-2024, all RLs are around 602-616 cm, almost flat with RP.
 # - This matches the very negative shape in the recent fit: flood extremes are much less “explosive”,
 #   and the difference between 2-year and 50-year floods is small.
 
@@ -676,7 +736,7 @@ RL_tisza_max
 RL_tisza_min
 
 # Interpretation:
-# - Here, RLs are *higher* in 2014–2024 (e.g. 2-year low water: 64.3 → 67.3 cm).
+# - Here, RLs are *higher* in 2014-2024 (e.g. 2-year low water: 64.3 → 67.3 cm).
 # - Higher RL for minima means the river does *not* drop as low as before.
 # - So for Tisza, low-water extremes became *less* severe in the recent period,
 #   while floods also became much smaller and more bounded.
@@ -705,7 +765,7 @@ RL_tisza_both
 
 # Summary for the whole script:
 # - Duna:
-#   * Flood extremes (maxima): smaller scale, lower RLs in 2014–2024 → less extreme floods.
+#   * Flood extremes (maxima): smaller scale, lower RLs in 2014-2024 → less extreme floods.
 #   * Low-water extremes (minima): RLs became more negative → possible worsening of drought/low levels.
 #   * Significance: flood scale change is significant, low-water parameter changes are not (at 5%).
 #
