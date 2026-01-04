@@ -66,7 +66,7 @@ minmax_tisza_14_24 <- river_data_tisza_14_24 %>%
 ## 2. Fit GEV to annual maxima (Block Maxima)
 ############################################################
 
-out_dir <- file.path(getwd(), "figures")
+out_dir <- normalizePath(file.path(getwd(), "..", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 out_file <- file.path(out_dir, "tisza_gev_max_2014_2024_diagnostics.png")
@@ -116,7 +116,7 @@ message("Saved: ", out_file)
 ## TISZA – annual minima (2014–2024): GEV fit on -min + clean diagnostics export (EN)
 ############################################################
 
-out_dir <- file.path(getwd(), "figures")
+out_dir <- normalizePath(file.path(getwd(), "..", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 out_file <- file.path(out_dir, "tisza_gev_min_2014_2024_diagnostics.png")
@@ -202,7 +202,7 @@ minmax_tisza_02_13 <- river_data_tisza_02_13 %>%
 ## 2. GEV fit for annual maxima
 ############################################################
 
-out_dir <- file.path(getwd(), "figures")
+out_dir <- normalizePath(file.path(getwd(), "..", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 out_file <- file.path(out_dir, "tisza_gev_max_2002_2013_diagnostics.png")
@@ -248,7 +248,7 @@ message("Saved: ", out_file)
 # NOTE: Full 3-parameter GEV for minima was numerically unstable here,
 # so we switch to the simpler Gumbel model (shape ξ = 0).
 # We still work on Y = -min_value to treat minima as maxima.
-out_dir <- file.path(getwd(), "figures")
+out_dir <- normalizePath(file.path(getwd(), "..", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 out_file <- file.path(out_dir, "tisza_gumbel_min_2002_2013_diagnostics.png")
@@ -331,7 +331,7 @@ minmax_duna_02_13 <- river_data_duna_02_13 %>%
 ## 2. GEV fit for annual maxima
 ############################################################
 
-out_dir <- file.path(getwd(), "figures")
+out_dir <- normalizePath(file.path(getwd(), "..", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 out_file <- file.path(out_dir, "danube_gev_max_2002_2013_diagnostics.png")
@@ -374,7 +374,7 @@ message("Saved: ", out_file)
 ## 3. GEV fit for annual minima (via -min trick)
 ############################################################
 
-out_dir <- file.path(getwd(), "figures")
+out_dir <- normalizePath(file.path(getwd(), "..", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 out_file <- file.path(out_dir, "danube_gev_min_2002_2013_diagnostics.png")
@@ -452,7 +452,7 @@ minmax_duna_14_24 <- river_data_duna_14_24 %>%
 ############################################################
 ## 2. GEV fit for annual maxima
 ############################################################
-out_dir <- file.path(getwd(), "figures")
+out_dir <- normalizePath(file.path(getwd(), "..", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 out_file <- file.path(out_dir, "danube_gev_max_2014_2024_diagnostics.png")
@@ -495,7 +495,7 @@ message("Saved: ", out_file)
 ## 3. GEV fit for annual minima (via -min trick)
 ############################################################
 
-out_dir <- file.path(getwd(), "figures")
+out_dir <- normalizePath(file.path(getwd(), "..", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 out_file <- file.path(out_dir, "danube_gev_min_2014_2024_diagnostics.png")
