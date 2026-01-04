@@ -93,11 +93,12 @@ par(mfrow=c(2,2),
     cex.lab=0.90, cex.axis=0.85)
 
 plot(fit_gev_max_tisza_14_24, type="qq",      main="", sub="")
-plot(fit_gev_max_tisza_14_24, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_max_tisza_14_24, type="qq2",     main=NULL,
+     xlab="Empirical Quantiles")  # keep only "Empirical Quantiles" under panel 2
 plot(fit_gev_max_tisza_14_24, type="density", main="", sub="")
 plot(fit_gev_max_tisza_14_24, type="rl",      main="", sub="")
 
-mtext("Tisza – annual maxima (2014–2024), GEV",
+mtext("Tisza River – annual maxima (2014–2024), GEV",
       outer=TRUE, line=1.2, cex=1.0)
 
 dev.off()
@@ -110,6 +111,15 @@ message("Saved: ", out_file)
 ############################################################
 ## 3. Fit GEV to annual minima (via -min trick)
 ############################################################
+
+############################################################
+## TISZA – annual minima (2014–2024): GEV fit on -min + clean diagnostics export (EN)
+############################################################
+
+out_dir <- file.path(getwd(), "figures")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+out_file <- file.path(out_dir, "tisza_gev_min_2014_2024_diagnostics.png")
 
 # Fit: for minima model Y = -min_value as maxima (since min X = -max(-X))
 fit_gev_min_tisza_14_24 <- fevd(
@@ -126,10 +136,7 @@ print(summary(fit_gev_min_tisza_14_24))
 png(filename = out_file, width = 2200, height = 1800, res = 300)
 
 op <- par(no.readonly = TRUE)
-on.exit({
-  par(op)
-  dev.off()
-}, add = TRUE)
+on.exit({ par(op); dev.off() }, add = TRUE)
 
 par(mfrow = c(2, 2),
     mar   = c(4.2, 4.2, 2.0, 1.0),
@@ -137,16 +144,20 @@ par(mfrow = c(2, 2),
     cex.lab  = 0.90,
     cex.axis = 0.85)
 
-plot(fit_gev_min_tisza_14_24, type = "qq",      main = "",    sub = "")
-plot(fit_gev_min_tisza_14_24, type = "qq2",     main = NULL)  # keep NULL (no "")
-plot(fit_gev_min_tisza_14_24, type = "density", main = "",    sub = "")
-plot(fit_gev_min_tisza_14_24, type = "rl",      main = "",    sub = "")
+plot(fit_gev_min_tisza_14_24, type = "qq",      main = "",   sub = "")
+plot(fit_gev_min_tisza_14_24, type = "qq2",     main = NULL,
+     xlab = "Empirical Quantiles")  # keep only "Empirical Quantiles" under panel 2
+plot(fit_gev_min_tisza_14_24, type = "density", main = "",   sub = "")
+plot(fit_gev_min_tisza_14_24, type = "rl",      main = "",   sub = "")
 
-mtext("Tisza – Annual minima (2014–2024), GEV fit (x = -min)",
+mtext("Tisza River – annual minima (2014–2024), GEV (fit to -min)",
       outer = TRUE, line = 1.2, cex = 1.0)
 
 dev.off()
 par(op)
+
+message("Saved: ", out_file)
+
 
 ############################################################
 ## 4. 5000-day (~13.7-year) return levels
@@ -216,7 +227,8 @@ par(mfrow=c(2,2),
     cex.lab=0.90, cex.axis=0.85)
 
 plot(fit_gev_max_tisza_02_13, type="qq",      main="", sub="")
-plot(fit_gev_max_tisza_02_13, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_max_tisza_02_13, type="qq2",     main=NULL,
+     xlab="Empirical Quantiles")  # keep only "Empirical Quantiles" under panel 2
 plot(fit_gev_max_tisza_02_13, type="density", main="", sub="")
 plot(fit_gev_max_tisza_02_13, type="rl",      main="", sub="")
 
@@ -227,6 +239,7 @@ dev.off()
 par(op)
 
 message("Saved: ", out_file)
+
 
 ############################################################
 ## 3. Gumbel fit for annual minima (instead of full GEV)
@@ -260,7 +273,8 @@ par(mfrow=c(2,2),
     cex.lab=0.90, cex.axis=0.85)
 
 plot(fit_gumbel_min_tisza_02_13, type="qq",      main="", sub="")
-plot(fit_gumbel_min_tisza_02_13, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gumbel_min_tisza_02_13, type="qq2",     main=NULL,
+     xlab="Empirical Quantiles")  # keep only "Empirical Quantiles" under panel 2
 plot(fit_gumbel_min_tisza_02_13, type="density", main="", sub="")
 plot(fit_gumbel_min_tisza_02_13, type="rl",      main="", sub="")
 
@@ -271,6 +285,7 @@ dev.off()
 par(op)
 
 message("Saved: ", out_file)
+
 
 
 
@@ -341,7 +356,8 @@ par(mfrow=c(2,2),
     cex.lab=0.90, cex.axis=0.85)
 
 plot(fit_gev_max_duna_02_13, type="qq",      main="", sub="")
-plot(fit_gev_max_duna_02_13, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_max_duna_02_13, type="qq2",     main=NULL,
+     xlab="Empirical Quantiles")  # keep only "Empirical Quantiles" under panel 2
 plot(fit_gev_max_duna_02_13, type="density", main="", sub="")
 plot(fit_gev_max_duna_02_13, type="rl",      main="", sub="")
 
@@ -352,6 +368,7 @@ dev.off()
 par(op)
 
 message("Saved: ", out_file)
+
 
 ############################################################
 ## 3. GEV fit for annual minima (via -min trick)
@@ -382,7 +399,8 @@ par(mfrow=c(2,2),
     cex.lab=0.90, cex.axis=0.85)
 
 plot(fit_gev_min_duna_02_13, type="qq",      main="", sub="")
-plot(fit_gev_min_duna_02_13, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_min_duna_02_13, type="qq2",     main=NULL,
+     xlab="Empirical Quantiles")  # keep only "Empirical Quantiles" under panel 2
 plot(fit_gev_min_duna_02_13, type="density", main="", sub="")
 plot(fit_gev_min_duna_02_13, type="rl",      main="", sub="")
 
@@ -434,7 +452,6 @@ minmax_duna_14_24 <- river_data_duna_14_24 %>%
 ############################################################
 ## 2. GEV fit for annual maxima
 ############################################################
-
 out_dir <- file.path(getwd(), "figures")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
@@ -460,7 +477,8 @@ par(mfrow=c(2,2),
     cex.lab=0.90, cex.axis=0.85)
 
 plot(fit_gev_max_duna_14_24, type="qq",      main="", sub="")
-plot(fit_gev_max_duna_14_24, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_max_duna_14_24, type="qq2",     main=NULL,
+     xlab="Empirical Quantiles")  # keep only "Empirical Quantiles" under panel 2
 plot(fit_gev_max_duna_14_24, type="density", main="", sub="")
 plot(fit_gev_max_duna_14_24, type="rl",      main="", sub="")
 
@@ -471,7 +489,6 @@ dev.off()
 par(op)
 
 message("Saved: ", out_file)
-
 
 
 ############################################################
@@ -503,7 +520,8 @@ par(mfrow=c(2,2),
     cex.lab=0.90, cex.axis=0.85)
 
 plot(fit_gev_min_duna_14_24, type="qq",      main="", sub="")
-plot(fit_gev_min_duna_14_24, type="qq2",     main=NULL)   # prevents the long call title
+plot(fit_gev_min_duna_14_24, type="qq2",     main=NULL,
+     xlab="Empirical Quantiles")  # keep only "Empirical Quantiles" under panel 2
 plot(fit_gev_min_duna_14_24, type="density", main="", sub="")
 plot(fit_gev_min_duna_14_24, type="rl",      main="", sub="")
 
@@ -514,6 +532,7 @@ dev.off()
 par(op)
 
 message("Saved: ", out_file)
+
 
 ############################################################
 ## 4. 5000-day return levels
