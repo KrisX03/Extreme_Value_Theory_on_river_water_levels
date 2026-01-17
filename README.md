@@ -80,7 +80,8 @@ Planned structure of the project repository:
 .
 ├── codes/
 │   ├── 01_merging_cleaning.R      # import, cleaning and reshaping of raw data
-│   └── 02_analysis.R              # EVT analysis: GEV/GPD fitting, plots, results
+│   ├── 02_analysis_GEV.R          # EVT block maxima analysis: GEV fitting + diagnostics plots
+│   └── 03_analysis_GPD.R          # EVT POT analysis: GPD fitting + diagnostics/threshold plots
 ├── data/
 │   ├── river_water_levels.xlsx    # raw downloaded river water levels
 │   ├── river_data.csv             # full cleaned daily dataset (both rivers, all years)
@@ -89,9 +90,18 @@ Planned structure of the project repository:
 │   ├── river_data_tisza_02_13.csv # Tisza daily data, 2002–2013
 │   └── river_data_tisza_14_24.csv # Tisza daily data, 2014–2024
 ├── figures/
-│   └── (plots from 02_analysis.R will be saved here)
-├── documents/
-│   └── (report, slides, notes, etc.)
+│   ├── danube_gev_max_2002_2013_diagnostics.png
+│   ├── danube_gev_max_2014_2024_diagnostics.png
+│   ├── danube_gev_min_2002_2013_diagnostics.png
+│   ├── danube_gev_min_2014_2024_diagnostics.png
+│   ├── mrl_duna_2002_2013.png
+│   ├── threshrange_duna_2002_2013.png
+│   ├── tisza_gev_max_2002_2013_diagnostics.png
+│   ├── tisza_gev_max_2014_2024_diagnostics.png
+│   ├── tisza_gev_min_2014_2024_diagnostics.png
+│   └── tisza_gumbel_min_2002_2013_diagnostics.png
+│
+├── report.pdf                     # final written report (main output)
 └── README.md
 ```
 
