@@ -2,6 +2,8 @@
 ## Analytical comparison of Hungarian rivers
 ###   Computational Statistics – Group Project
 
+
+
 ### Team members
 - Kristóf Andrási  
 - Gellért Banai  
@@ -9,72 +11,84 @@
 - Ákos Virág  
 
 ---
-In this project we study **extreme water levels** of the two largest Hungarian rivers:
 
-- **Danube (Duna/Donau) at Esztergom**
-- **Tisa (Tisza/Theiß) at Szeged**
+## Project overview
 
-for the period **2002–2024**.  
-Using tools from **Extreme Value Theory (EVT)**, our aims are:
+This repository contains the code, data and figures for our course project on **flood and drought risk** on Hungary’s two largest rivers:
 
-- to model **extreme maxima and minima** of daily water levels,
-- to fit **Generalized Extreme Value (GEV)** distributions using the **Block Maxima** method,
-- to fit **Generalized Pareto (GPD)** distributions using the **Peaks-Over-Threshold (POT)** method,
-- to estimate how high a **dam** should be in both cities (for different time periods) so that overflow occurs only about **once every 5000 days** which equals roughly 13.7 years,
-- to compare the statistical behaviour of extremes **before and after 2013** and discuss possible links to **climate change**.
+- **Danube (Duna) at Esztergom**
+- **Tisza at Szeged**
 
-We split the data into two subperiods:
+We use **Extreme Value Theory (EVT)** on **daily water-level data from 2002–2024** to answer two main questions:
 
-- **2002–2013**
-- **2014–2024**
+1. Have extreme high and low water levels changed between **2002–2013** and **2014–2024**?
+2. What dam height would be needed if we want overflow only about **once every 5000 days** (~13.7 years)?
 
-and analyse **maxima and minima** separately for each river and period. The final goal is to provide (i) a short, policy-oriented summary for the Hungarian Home Office and (ii) a more technical statistical report.  [oai_citation:0‡Topic04 - Extreme Value Theory.pdf](sediment://file_00000000d998722fa976a337243b5bce)  
+The results are reported in two formats (see `report.pdf`):
 
----
-
-## Methods (short summary)
-
-
-- **Block Maxima (BM)**  
-  - Aggregate daily data into blocks (e.g. yearly or seasonal blocks).  
-  - Extract block **maxima** (for floods) and **minima** (for low water).  
-  - Fit a **GEV distribution** to the block extremes using the `extRemes` package.  
-
-- **Peaks-Over-Threshold (POT)**  
-  - Choose a high (or low) threshold for water levels.  
-  - Model exceedances over the threshold using the **GPD**.  
-  - Compare POT-based return levels with BM-based ones.
-
-For both rivers and both periods, we:
-
-- estimate GEV and GPD parameters for maxima and minima,
-- compute relevant **return levels** (especially the level corresponding to a **5000-day return period**),
-- compare fitted distributions across time (moments, quantiles, density shapes),
-- assess whether changes are **statistically significant at the 5% level**.
-
-Details of the modelling choices (block size, threshold selection, diagnostics) are documented in the report.
+- a **1-page policy brief** for the Hungarian Home Office (plain language, focused on resource allocation), and  
+- a **technical 3-page summary** for statisticians (methods, assumptions, tests, diagnostics).
 
 ---
 
 ## Data
 
-We use daily water level time series for:
+Daily water levels for:
 
-- **Duna – Esztergom**, 2002–2024  
-- **Tisza – Szeged**, 2002–2024  
+- **Duna – Esztergom, 2002–2024**  
+- **Tisza – Szeged, 2002–2024**
 
-The raw data contain daily water levels; after cleaning, we obtain:
+Source: *Országos Vízjelző Szolgálat / Hydroinfo* online archive.
 
-- a tidy panel of daily observations for each river, year, month and day,
-- derived datasets of block maxima/minima and threshold exceedances for EVT fitting.
+Main preprocessing steps:
 
-> **Data source:** official Hungarian hydrological / water-level records (https://www.hydroinfo.hu/Html/archivum/archiv_tabla.html).
+- convert raw tables into a **tidy daily panel** (river, date, year, value),
+- split the series into two periods: **2002–2013** (early) and **2014–2024** (late),
+- handle a very small number of missing daily values and remove obvious artefacts,
+- create derived data sets of **annual maxima/minima** and **threshold exceedances**.
+
+---
+
+## Methods
+
+We combine the two standard EVT approaches used in the course.
+
+### 1. Block Maxima (GEV)
+
+- For each river and period we compute **annual maxima** (floods) and, after sign-flipping, **annual minima** (droughts).  
+- We fit **Generalized Extreme Value (GEV)** models using maximum likelihood (`extRemes::fevd`).  
+- To test for changes between 2002–2013 and 2014–2024, we fit  
+  - a **stationary GEV** (no time effect), and  
+  - a **non-stationary GEV** where **location and/or scale** depend on the period.  
+- We use **Likelihood Ratio tests** to check whether adding period-specific parameters improves fit at the 5% level and compute **5000-day return levels** (design dam heights) with confidence intervals.
+
+### 2. Peaks-Over-Threshold (POT, GPD)
+
+- To better use the short time series, we also model **all exceedances over a high threshold**:  
+  - high flows → raw levels above a high quantile,  
+  - low flows → exceedances of **–water-level** above a high threshold.  
+- Thresholds are guided by **Mean Residual Life plots** and **parameter stability plots**; for comparability we mainly use the **95th percentile** in each series.  
+- Exceedances are modelled with a **Generalized Pareto Distribution (GPD)** (`type = "GP"` in `fevd`).  
+- We compare **scale and shape parameters** between periods using **Wald-type tests** based on the parameter covariance matrices and compute **5000-day return levels** from the GPD fits.
+
+---
+
+## Main findings (very short)
+
+(Full details and plots are in `report.pdf`.)
+
+- **Tisza (Szeged)**  
+  - Flood extremes are **clearly lower** in 2014–2024 than in 2002–2013; both GEV and GPD show a marked drop in the 5000-day return level and parameter-change tests strongly reject stationarity.  
+  - Low-water extremes show **no strong worsening**; changes in drought risk are small.
+
+- **Danube (Esztergom)**  
+  - Flood and low-water extremes are **slightly lower** in the later period, but evidence is weaker: GEV tests do **not** reject stationarity at 5%, and confidence intervals for return levels overlap.
+
+Because each period covers only ~11 years, the **uncertainty is substantial**, especially for 5000-day events. The analysis is therefore best seen as **characterising recent decades**, not as a long-term climate projection.
 
 ---
 
 ## Repository structure
-
-Planned structure of the project repository:
 
 ```text
 .
